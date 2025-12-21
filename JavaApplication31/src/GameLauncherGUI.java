@@ -3,7 +3,7 @@ import java.awt.*;
 import java.io.File;
 
 public class GameLauncherGUI extends JFrame {
-    private static final String SAVE_FILE = "sudoku_save.ser";
+    private static final String CURRENT_SAVE_FILE = "sudoku_games" + File.separator + "incomplete" + File.separator + "game.txt";
     private JLabel statusLabel;
     private JButton continueButton;
     
@@ -14,7 +14,7 @@ public class GameLauncherGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
         
-        // Create components
+        
         statusLabel = new JLabel("", SwingConstants.CENTER);
         statusLabel.setFont(new Font("Arial", Font.BOLD, 14));
         
@@ -25,34 +25,34 @@ public class GameLauncherGUI extends JFrame {
         JButton newHardButton = new JButton("New Hard Game");
         JButton exitButton = new JButton("Exit");
         
-        // Style buttons
+        
         styleButton(continueButton, new Color(70, 130, 180));
         styleButton(newEasyButton, new Color(100, 200, 100));
         styleButton(newMediumButton, new Color(255, 200, 100));
         styleButton(newHardButton, new Color(220, 100, 100));
         styleButton(exitButton, new Color(120, 120, 120));
         
-        // Add action listeners
+        
         continueButton.addActionListener(e -> loadGame());
         newEasyButton.addActionListener(e -> startNewGame('E'));
         newMediumButton.addActionListener(e -> startNewGame('M'));
         newHardButton.addActionListener(e -> startNewGame('H'));
         exitButton.addActionListener(e -> System.exit(0));
         
-        // Add components to panel
+        
         buttonPanel.add(continueButton);
         buttonPanel.add(newEasyButton);
         buttonPanel.add(newMediumButton);
         buttonPanel.add(newHardButton);
         buttonPanel.add(exitButton);
         
-        // Add padding
+        
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         mainPanel.add(statusLabel, BorderLayout.NORTH);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
         
-        // Check for saved game
+        
         checkForSavedGame();
         
         add(mainPanel);
@@ -68,7 +68,7 @@ public class GameLauncherGUI extends JFrame {
     }
     
     private void checkForSavedGame() {
-        File saveFile = new File(SAVE_FILE);
+        File saveFile = new File(CURRENT_SAVE_FILE);
         continueButton.setEnabled(saveFile.exists());
         
         if (saveFile.exists()) {

@@ -10,7 +10,7 @@ public class RandomPairs {
     private final Random random;
 
     public RandomPairs() {
-        // Seeded based on current time as per requirement
+        
         this.random = new Random(System.currentTimeMillis());
     }
 

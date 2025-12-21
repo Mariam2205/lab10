@@ -21,7 +21,7 @@ public class SudokuSolver {
         PermutationIterator iter = new PermutationIterator();
         while (iter.hasNext()) {
             int[] combo = iter.next();
-            // Flyweight: Check board validity without modification
+            
             if (verifier.isValidWithPermutation(board, emptyCells, combo)) {
                 return combo;
             }

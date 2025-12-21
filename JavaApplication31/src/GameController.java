@@ -8,7 +8,7 @@ public class GameController implements Viewable {
     private final String BASE_DIR = "sudoku_games/";
 
     public GameController() {
-        // Requirement 3.3: Create folder hierarchy
+        
         try {
             Files.createDirectories(Paths.get(BASE_DIR + "easy"));
             Files.createDirectories(Paths.get(BASE_DIR + "medium"));
@@ -22,9 +22,9 @@ public class GameController implements Viewable {
     @Override
     public Catalog getCatalog() {
         Catalog cat = new Catalog();
-        // Requirement 4: Check for unfinished game
+        
         cat.current = Files.exists(Paths.get(BASE_DIR + "incomplete/game.txt"));
-        // Requirement 4: Check if at least one game exists per difficulty
+        
         cat.allModesExist = checkModes();
         return cat;
     }
@@ -39,7 +39,7 @@ public class GameController implements Viewable {
                               .orElseThrow(() -> new Exception("No game file found."));
             
             int[][] board = readBoard(file);
-            // If loading a new game, save it to the 'incomplete' folder as the current game
+            
             if (level != DifficultyEnum.INCOMPLETE) {
                 saveBoard(Paths.get(BASE_DIR + "incomplete/game.txt"), board);
                 Files.deleteIfExists(Paths.get(BASE_DIR + "incomplete/log.txt"));
@@ -50,13 +50,13 @@ public class GameController implements Viewable {
 
     @Override
     public void driveGames(Game sourceGame) throws Exception {
-        // Requirement 3.1: Verify source solution first
+        
         String status = verifier.verify(sourceGame.getBoard());
         if (!status.equals("valid")) {
             throw new Exception("Source solution is " + status.toUpperCase());
         }
 
-        // Requirement 3.2: Generate levels using RandomPairs
+        
         RandomPairs rp = new RandomPairs();
         generateAndSaveLevel("easy", sourceGame.getBoard(), rp.generateDistinctPairs(10));
         generateAndSaveLevel("medium", sourceGame.getBoard(), rp.generateDistinctPairs(20));
@@ -75,7 +75,7 @@ public class GameController implements Viewable {
     @Override
     public String verifyGame(Game game) {
         String result = verifier.verify(game.getBoard());
-        // Requirement 3.3: If solved and valid, remove permanently
+        
         if (result.equals("valid")) {
             try {
                 Files.deleteIfExists(Paths.get(BASE_DIR + "incomplete/game.txt"));
@@ -92,13 +92,13 @@ public class GameController implements Viewable {
 
     @Override
     public void logUserAction(String userAction) throws IOException {
-        // Requirement 8: Log entries written immediately
+        
         Files.write(Paths.get(BASE_DIR + "incomplete/log.txt"), 
                    (userAction + "\n").getBytes(), 
                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 
-    // Helper: Logic to check if all difficulty folders contain files
+    
     private boolean checkModes() {
         return hasFile("easy") && hasFile("medium") && hasFile("hard");
     }

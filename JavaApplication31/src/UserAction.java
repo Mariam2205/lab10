@@ -1,4 +1,4 @@
-// File: UserAction.java
+
 public class UserAction {
     private String actionType;
     private int row;
@@ -14,7 +14,7 @@ public class UserAction {
         this.timestamp = System.currentTimeMillis();
     }
     
-    // Getters
+    
     public String getActionType() { return actionType; }
     public int getRow() { return row; }
     public int getCol() { return col; }
