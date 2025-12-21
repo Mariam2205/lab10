@@ -181,8 +181,19 @@ public class Controller implements Controllable, Serializable {
         ensureGameDirs();
 
         
-        int[][] solved = new int[9][9];
-        generateSolvedPuzzle(solved, 0, 0);
+        int[][] solved;
+        Path sourceFile = Paths.get(BASE_DIR, "source.txt");
+        if (Files.exists(sourceFile)) {
+            int[][] source = readBoard(sourceFile);
+            GameState state = verifyState(source);
+            if (state != GameState.VALID) {
+                throw new IllegalArgumentException("Source solution in " + sourceFile + " must be VALID. Found: " + state);
+            }
+            solved = source;
+        } else {
+            solved = new int[9][9];
+            generateSolvedPuzzle(solved, 0, 0);
+        }
 
         long ts = System.currentTimeMillis();
         int[][] easy = copyBoard(solved);
