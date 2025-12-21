@@ -5,16 +5,81 @@ public class Verifier {
         boolean hasZero = false;
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
-                if (board[r][c] == 0) {
-                    hasZero = true; 
-                } else {
-                    if (!isValidPlacement(board, r, c, board[r][c])) {
-                        return "invalid " + r + "," + c;
-                    }
+                int v = board[r][c];
+                if (v == 0) {
+                    hasZero = true;
+                    continue;
+                }
+                if (v < 1 || v > 9 || !isValidPlacement(board, r, c, v)) {
+                    return "invalid " + r + "," + c;
                 }
             }
         }
         return hasZero ? "incomplete" : "valid";
+    }
+
+    public GameState verifyState(int[][] board) {
+        boolean hasZero = false;
+
+        for (int r = 0; r < 9; r++) {
+            boolean[] seen = new boolean[10];
+            for (int c = 0; c < 9; c++) {
+                int v = board[r][c];
+                if (v == 0) {
+                    hasZero = true;
+                    continue;
+                }
+                if (v < 1 || v > 9) {
+                    return GameState.INVALID;
+                }
+                if (seen[v]) {
+                    return GameState.INVALID;
+                }
+                seen[v] = true;
+            }
+        }
+
+        for (int c = 0; c < 9; c++) {
+            boolean[] seen = new boolean[10];
+            for (int r = 0; r < 9; r++) {
+                int v = board[r][c];
+                if (v == 0) {
+                    hasZero = true;
+                    continue;
+                }
+                if (v < 1 || v > 9) {
+                    return GameState.INVALID;
+                }
+                if (seen[v]) {
+                    return GameState.INVALID;
+                }
+                seen[v] = true;
+            }
+        }
+
+        for (int br = 0; br < 3; br++) {
+            for (int bc = 0; bc < 3; bc++) {
+                boolean[] seen = new boolean[10];
+                for (int r = br * 3; r < br * 3 + 3; r++) {
+                    for (int c = bc * 3; c < bc * 3 + 3; c++) {
+                        int v = board[r][c];
+                        if (v == 0) {
+                            hasZero = true;
+                            continue;
+                        }
+                        if (v < 1 || v > 9) {
+                            return GameState.INVALID;
+                        }
+                        if (seen[v]) {
+                            return GameState.INVALID;
+                        }
+                        seen[v] = true;
+                    }
+                }
+            }
+        }
+
+        return hasZero ? GameState.INCOMPLETE : GameState.VALID;
     }
 
     
@@ -33,7 +98,15 @@ public class Verifier {
             if (i != c && getVirtualVal(board, cells, combo, r, i) == val) return false;
             if (i != r && getVirtualVal(board, cells, combo, i, c) == val) return false;
         }
-        
+        int subgridRow = r - r % 3;
+        int subgridCol = c - c % 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if ((subgridRow + i != r || subgridCol + j != c) && getVirtualVal(board, cells, combo, subgridRow + i, subgridCol + j) == val) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -48,6 +121,15 @@ public class Verifier {
         for (int i = 0; i < 9; i++) {
             if (i != col && board[row][i] == val) return false;
             if (i != row && board[i][col] == val) return false;
+        }
+        int subgridRow = row - row % 3;
+        int subgridCol = col - col % 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if ((subgridRow + i != row || subgridCol + j != col) && board[subgridRow + i][subgridCol + j] == val) {
+                    return false;
+                }
+            }
         }
         return true;
     }
