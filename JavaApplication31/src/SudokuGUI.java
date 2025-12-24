@@ -536,10 +536,6 @@ public class SudokuGUI extends JFrame {
                 e.printStackTrace();
             }
 
-            
-            
-            
-            
 
             new GameLauncherGUI().setVisible(true);
         });

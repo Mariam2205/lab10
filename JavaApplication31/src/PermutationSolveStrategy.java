@@ -1,38 +1,38 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class PermutationSolveStrategy implements SolveStrategy {
 
     @Override
     public int[][] solve(int[][] game) throws Exception {
-        int[] emptyRows = new int[5];
-        int[] emptyCols = new int[5];
-        int emptyCount = 0;
-
+        List<int[]> emptyCells = new ArrayList<>();
+        
+        // Find all empty cells
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
                 if (game[r][c] == 0) {
-                    if (emptyCount >= 5) {
-                        throw new Exception("Solver supports exactly 5 empty cells");
-                    }
-                    emptyRows[emptyCount] = r;
-                    emptyCols[emptyCount] = c;
-                    emptyCount++;
+                    emptyCells.add(new int[]{r, c});
                 }
             }
         }
 
-        if (emptyCount != 5) {
-            throw new Exception("Solver supports exactly 5 empty cells");
+        if (emptyCells.size() != 5) {
+            throw new Exception("Solver supports exactly 5 empty cells, found: " + emptyCells.size());
         }
 
-        BoardVerifier verifier = new BoardVerifier(game, emptyRows, emptyCols);
+        // Use Flyweight pattern for memory-efficient verification
+        FlyweightBoard flyweightBoard = new FlyweightBoard(game, emptyCells);
         PermutationIterator iterator = new PermutationIterator();
 
+        // Single-threaded sequential verification
         while (iterator.hasNext()) {
             int[] candidate = iterator.next();
-            if (verifier.isValid(candidate)) {
-                for (int k = 0; k < 5; k++) {
-                    game[emptyRows[k]][emptyCols[k]] = candidate[k];
+            if (flyweightBoard.isValid(candidate)) {
+                // Apply the solution to the original board
+                for (int i = 0; i < emptyCells.size(); i++) {
+                    int[] cell = emptyCells.get(i);
+                    game[cell[0]][cell[1]] = candidate[i];
                 }
                 return game;
             }
@@ -41,6 +41,10 @@ public class PermutationSolveStrategy implements SolveStrategy {
         throw new Exception("No solution exists");
     }
 
+    /**
+     * Iterator pattern implementation for generating permutations
+     * Generates all possible combinations of 5 digits (1-9) for the empty cells
+     */
     private static final class PermutationIterator implements java.util.Iterator<int[]> {
         private static final int MAX = 9 * 9 * 9 * 9 * 9;
         private final int[] values = new int[5];
@@ -62,71 +66,6 @@ public class PermutationSolveStrategy implements SolveStrategy {
                 x /= 9;
             }
             return values;
-        }
-    }
-
-    private static final class BoardVerifier {
-        private final int[][] board;
-        private final int[] posIndex = new int[81];
-
-        private BoardVerifier(int[][] board, int[] emptyRows, int[] emptyCols) {
-            this.board = board;
-            Arrays.fill(posIndex, -1);
-            for (int i = 0; i < 5; i++) {
-                posIndex[emptyRows[i] * 9 + emptyCols[i]] = i;
-            }
-        }
-
-        private int valueAt(int r, int c, int[] candidate) {
-            int idx = posIndex[r * 9 + c];
-            if (idx >= 0) {
-                return candidate[idx];
-            }
-            return board[r][c];
-        }
-
-        private boolean isValid(int[] candidate) {
-            int[] seen = new int[10];
-            int stamp = 1;
-
-            
-            for (int r = 0; r < 9; r++) {
-                stamp++;
-                for (int c = 0; c < 9; c++) {
-                    int v = valueAt(r, c, candidate);
-                    if (v == 0) continue;
-                    if (seen[v] == stamp) return false;
-                    seen[v] = stamp;
-                }
-            }
-
-            
-            for (int c = 0; c < 9; c++) {
-                stamp++;
-                for (int r = 0; r < 9; r++) {
-                    int v = valueAt(r, c, candidate);
-                    if (v == 0) continue;
-                    if (seen[v] == stamp) return false;
-                    seen[v] = stamp;
-                }
-            }
-
-            
-            for (int br = 0; br < 3; br++) {
-                for (int bc = 0; bc < 3; bc++) {
-                    stamp++;
-                    for (int r = br * 3; r < br * 3 + 3; r++) {
-                        for (int c = bc * 3; c < bc * 3 + 3; c++) {
-                            int v = valueAt(r, c, candidate);
-                            if (v == 0) continue;
-                            if (seen[v] == stamp) return false;
-                            seen[v] = stamp;
-                        }
-                    }
-                }
-            }
-
-            return true;
         }
     }
 }

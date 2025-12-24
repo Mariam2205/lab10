@@ -21,11 +21,9 @@ public class GameController implements Viewable {
 
     @Override
     public Catalog getCatalog() {
-        Catalog cat = new Catalog();
-        
-        cat.current = Files.exists(Paths.get(BASE_DIR + "incomplete/game.txt"));
-        
-        cat.allModesExist = checkModes();
+        boolean current = Files.exists(Paths.get(BASE_DIR + "incomplete/game.txt"));
+        boolean allModesExist = checkModes();
+        Catalog cat = new Catalog(current, allModesExist);
         return cat;
     }
 

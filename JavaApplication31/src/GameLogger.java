@@ -1,7 +1,9 @@
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,5 +22,10 @@ public class GameLogger {
                 action.getValue());
             writer.write(logEntry);
         }
+    }
+    
+    public void clearLog() throws IOException {
+        Path logPath = Paths.get(LOG_FILE);
+        Files.deleteIfExists(logPath);
     }
 }
