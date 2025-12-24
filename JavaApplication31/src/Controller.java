@@ -599,6 +599,12 @@ public class Controller implements Controllable, Serializable {
     @Override
     public void saveGame() throws IOException {
         ensureGameDirs();
+        
+        // Don't save if currentGame is null (game completed and deleted)
+        if (currentGame == null) {
+            return;
+        }
+        
         StringBuilder sb = new StringBuilder();
         sb.append("faults ").append(faults).append('\n');
         sb.append("source ").append(currentGameSourcePath == null ? "" : currentGameSourcePath).append('\n');
