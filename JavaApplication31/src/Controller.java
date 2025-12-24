@@ -191,8 +191,7 @@ public class Controller implements Controllable, Serializable {
             }
             solved = source;
         } else {
-            solved = new int[9][9];
-            generateSolvedPuzzle(solved, 0, 0);
+            throw new IllegalStateException("No source file found. Please provide a source.txt file with a valid Sudoku solution.");
         }
 
         long ts = System.currentTimeMillis();
@@ -429,36 +428,7 @@ public class Controller implements Controllable, Serializable {
     }
 
     
-    private boolean generateSolvedPuzzle(int[][] grid, int row, int col) {
-        if (col == 9) {
-            col = 0;
-            row++;
-            if (row == 9) {
-                return true;
-            }
-        }
-        
-        
-        if (grid[row][col] != 0) {
-            return generateSolvedPuzzle(grid, row, col + 1);
-        }
-        
-        
-        int[] nums = {1,2,3,4,5,6,7,8,9};
-        shuffleArray(nums);
-        
-        for (int num : nums) {
-            if (isValid(grid, row, col, num)) {
-                grid[row][col] = num;
-                if (generateSolvedPuzzle(grid, row, col + 1)) {
-                    return true;
-                }
-                grid[row][col] = 0;
-            }
-        }
-        return false;
-    }
-
+    
     private boolean solveSudoku(int[][] grid) {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -727,12 +697,4 @@ public class Controller implements Controllable, Serializable {
         return true;
     }
 
-    private void shuffleArray(int[] array) {
-        for (int i = array.length - 1; i > 0; i--) {
-            int index = random.nextInt(i + 1);
-            int temp = array[index];
-            array[index] = array[i];
-            array[i] = temp;
-        }
     }
-}

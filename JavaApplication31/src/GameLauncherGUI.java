@@ -177,7 +177,7 @@ public class GameLauncherGUI extends JFrame {
         try {
             Path source = Paths.get(SOURCE_FILE);
             if (!Files.exists(source)) {
-                sourceLabel.setText("Source: (none) — will generate random solution");
+                sourceLabel.setText("Source: (none) — Please provide a source file");
                 sourceLabel.setForeground(new Color(90, 90, 90));
                 return;
             }
